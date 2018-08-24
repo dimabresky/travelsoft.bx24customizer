@@ -1,0 +1,5 @@
+<?php
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTIONS_TAB"] = "Настройки";
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTIONS_TAB_TITLE"] = "Общие настройки";
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_API_URL"] = "URL для выполнения запроса в ПК-МастерТур";
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_INFO_LEAD_CODE_FIELD"] = "Код поля лида для записи информации из ПК-МастерТур";
