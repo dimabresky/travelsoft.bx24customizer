@@ -9,15 +9,23 @@ namespace travelsoft\bx24customizer;
  */
 class EventsHandlers {
     
-    public static function loadJsOfCustomizationTelephonyPopup () {
+    /**
+     * Load custom scripts
+     */
+    public static function loadJsOfCustomizationTelephonyPopup() {
         
-    }
-    
-    public static function loadDataForLeadFromMasterTourOnAdd () {
+        $arJsConfig = array(
+            "bx24customizer_telephony_popup" => array(
+                "js" => "/local/modules/travelsoft.bx24customizer/scripts/customization_telephony_popup/main.js",
+                "css" => "/local/modules/travelsoft.bx24customizer/scripts/customization_telephony_popup/css/main.css"
+            )
+        );
+
+        foreach ($arJsConfig as $ext => $arExt) {
+            \CJSCore::RegisterExt($ext, $arExt);
+        }
         
+        \CUtil::InitJSCore(array('bx24customizer_telephony_popup')); 
     }
-    
-    public static function loadDataForLeadFromMasterTourOnUpdate () {
-        
-    }
+
 }

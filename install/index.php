@@ -114,8 +114,6 @@ class travelsoft_bx24customizer extends CModule {
 
                 case "customization_of_telephony_popup_and_load_data_from_mastertour":
 
-                    RegisterModuleDependences("crm", "onCrmLeadAdd", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadDataForLeadFromMasterTourOnAdd");
-                    RegisterModuleDependences("crm", "onCrmLeadUpdate", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadDataForLeadFromMasterTourOnUpdate");
                     RegisterModuleDependences("main", "OnEpilog", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadJsOfCustomizationTelephonyPopup");
 
                     break;
@@ -128,8 +126,6 @@ class travelsoft_bx24customizer extends CModule {
 
     public function deleteModuleDependencies() {
 
-        UnRegisterModuleDependences("crm", "onCrmLeadAdd", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadDataForLeadFromMasterTourOnAdd");
-        UnRegisterModuleDependences("crm", "onCrmLeadUpdate", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadDataForLeadFromMasterTourOnUpdate");
         UnRegisterModuleDependences("main", "OnEpilog", $this->MODULE_ID, "\\travelsoft\\bx24customizer\\EventsHandlers", "loadJsOfCustomizationTelephonyPopup");
     }
 
@@ -140,6 +136,7 @@ class travelsoft_bx24customizer extends CModule {
                 case "customization_of_telephony_popup_and_load_data_from_mastertour":
 
                     Option::set($this->MODULE_ID, "MASTERTOUR_API_URL");
+                    Option::set($this->MODULE_ID, "MASTERTOUR_SECRET_API_KEY");
                     Option::set($this->MODULE_ID, "MASTERTOUR_INFO_LEAD_CODE_FIELD");
 
                     break;
@@ -149,6 +146,7 @@ class travelsoft_bx24customizer extends CModule {
 
     public function deleteOptions() {
         Option::delete($this->MODULE_ID, array("name" => "MASTERTOUR_API_URL"));
+        Option::delete($this->MODULE_ID, array("name" => "MASTERTOUR_SECRET_API_KEY"));
         Option::delete($this->MODULE_ID, array("name" => "MASTERTOUR_INFO_LEAD_CODE_FIELD"));
     }
 

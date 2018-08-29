@@ -1,0 +1,61 @@
+
+/* 
+    Created on : 27.08.2018, 15:01:35
+    Author     : dimabresky
+*/
+
+.druggable-icon {
+    background-image: url('data:image/png;base64,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');
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-size: cover;
+    display: inline-block;
+    float: left;
+    margin-top: 15px;
+}
+
+.travelsoft-bx24customizer-title-bar-title {
+    display: inline-block;
+    margin-top: 17px;
+    margin-left: 70px;
+    font-size: 16px;
+}
+
+.travelsoft-bx24customizer-popup-info {
+    line-height: 22px;
+}
+
+.travelsoft-bx24customizer-popup-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.travelsoft-bx24customizer-popup-info .detail-vouchers-info-data {
+    max-height: 213px;
+    overflow-y: scroll;
+    padding: 10px 0;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+.travelsoft-bx24customizer-popup-info .detail-vouchers-info-data .detail-by-voucher {
+    text-align: right;
+    padding-right: 10px;
+    color: darkblue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.travelsoft-bx24customizer-popup-info .block-info-data .block-title {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.detail-voucher-info-popup .block-info-data .block-title {
+    font-size: 16px;
+}
+
+.detail-voucher-info-popup {
+    max-height: 337px !important;
+}
