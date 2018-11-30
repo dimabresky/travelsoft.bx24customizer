@@ -2,6 +2,7 @@
 
 namespace travelsoft\bx24customizer\mastertour;
 
+use travelsoft\bx24customizer\Fields;
 use travelsoft\bx24customizer\Tools;
 
 /**
@@ -9,25 +10,27 @@ use travelsoft\bx24customizer\Tools;
  *
  * @author dimabresky
  */
-class Gateway {
+class Gateway
+{
 
     /**
+     * @param string $method
      * @param array $parameters
-     * @return string  ** Json String **
+     * @return string ** Json String **
      */
-    public static function sendRequest(array $parameters) {
-
-        $result = \file_get_contents(
-                \Bitrix\Main\Config\Option::get("travelsoft.bx24customizer", "MASTERTOUR_API_URL"), false, stream_context_create(
-                        array(
-                            'ssl' => array("verify_peer" => false),
-                            'http' => array(
-                                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                                'method' => 'POST',
-                                'content' => \json_encode($parameters),
-                            ),
-                        )
+    public static function sendRequest(string $method, array $parameters)
+    {
+        $url = Fields::getMasterApiUrl();
+        $result = \file_get_contents($url . $method, false, stream_context_create(
+                array(
+                    'ssl' => array("verify_peer" => false),
+                    'http' => array(
+                        'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                        'method' => 'POST',
+                        'content' => \json_encode($parameters),
+                    ),
                 )
+            )
         );
 
         return $result;
@@ -37,11 +40,27 @@ class Gateway {
      * @param string $phone
      * @return mixed
      */
-    public static function getMastertourLeadInfoByPhone(string $phone) {
-
-        return \json_decode(self::sendRequest(
-                        ["phone" => $phone,
-                            "signature" => Tools::createMastertourSignByLeadPhone($phone)]), true);
+    public static function getMastertourLeadInfoByPhone(string $phone)
+    {
+        return \json_decode(self::sendRequest('GetAgreements', [
+                "phone" => $phone,
+                "signature" => Tools::createMastertourSignByLeadPhone($phone)]
+        ), true);
     }
 
+    /**
+     * @param $dateBegin
+     * @param $dateEnd
+     * @return mixed
+     */
+    public static function getAgreementsByDates($dateBegin, $dateEnd)
+    {
+        $parameters = [
+            'dateBegin' => $dateBegin,
+            'dateEnd' => $dateEnd,
+            'signature' => Tools::createMastertourSignatureByDates($dateBegin, $dateEnd)
+        ];
+
+        return \json_decode(self::sendRequest('GetAgreementsByDate', $parameters), true);
+    }
 }
