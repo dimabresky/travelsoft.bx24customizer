@@ -12,6 +12,7 @@ global $APPLICATION;
 
 function renderOptions($arOptions, $mid) {
 
+    $options = '';
     foreach ($arOptions as $name => $arValues) {
 
         $cur_opt_val = htmlspecialcharsbx(Bitrix\Main\Config\Option::get($mid, $name));
@@ -50,14 +51,14 @@ if (!empty($module_options)) {
     }
 }
 
-$tabs = array(
-    array(
+$tabs = [
+    [
         "DIV" => "edit1",
         "TAB" => Loc::getMessage("TRAVELSOFT_BX24CUSTOMIZER_OPTIONS_TAB"),
         "ICON" => "",
         "TITLE" => Loc::getMessage("TRAVELSOFT_BX24CUSTOMIZER_OPTIONS_TAB_TITLE"),
-    )
-);
+    ]
+];
 
 $o_tab = new CAdminTabControl("TravelsoftTabControl", $tabs);
 if ($REQUEST_METHOD == "POST" && strlen($save . $reset) > 0 && check_bitrix_sessid()) {

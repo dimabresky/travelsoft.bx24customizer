@@ -4,3 +4,5 @@ $MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTIONS_TAB_TITLE"] = "Общие настро�
 $MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_API_URL"] = "URL для выполнения запроса в ПК-МастерТур";
 $MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_SECRET_API_KEY"] = "Ключ api к ПК-МастерТур";
 $MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_INFO_LEAD_CODE_FIELD"] = "Код поля лида для записи информации из ПК-МастерТур";
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_INFO_DEAL_CODE_FIELD"] = "Код поля сделки для записи информации из ПК-МастерТур";
+$MESS["TRAVELSOFT_BX24CUSTOMIZER_OPTION_MASTERTOUR_ID_CODE_FIELD"] = "Код поля сделки для записи ID из ПК-МастерТур";
