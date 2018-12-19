@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Sun
- * Date: 29.11.2018
- * Time: 12:34
- */
 
 namespace travelsoft\bx24customizer;
 

@@ -10,8 +10,8 @@ $mid = "travelsoft.bx24customizer";
 
 global $APPLICATION;
 
-function renderOptions($arOptions, $mid) {
-
+function renderOptions($arOptions, $mid)
+{
     $options = '';
     foreach ($arOptions as $name => $arValues) {
 
