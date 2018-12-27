@@ -151,6 +151,14 @@ class travelsoft_bx24customizer extends CModule
 
                     Option::set($this->MODULE_ID, "MASTERTOUR_INFO_DEAL_CODE_FIELD");
                     Option::set($this->MODULE_ID, "MASTERTOUR_ID_CODE_FIELD");
+                    Option::set($this->MODULE_ID, "TOUR_DATE_DEAL_FIELD");
+                    Option::set($this->MODULE_ID, "COUNTRY_DEAL_FIELD");
+                    Option::set($this->MODULE_ID, "RESORT_DEAL_FIELD");
+                    Option::set($this->MODULE_ID, "DURATION_DEAL_FIELD");
+                    Option::set($this->MODULE_ID, "FOOD_DEAL_FIELD");
+                    Option::set($this->MODULE_ID, "COUNTRY_STORE_ID");
+                    Option::set($this->MODULE_ID, "FOOD_STORE_ID");
+                    Option::set($this->MODULE_ID, "RESORT_STORE_ID");
 
                     break;
             }
@@ -165,5 +173,13 @@ class travelsoft_bx24customizer extends CModule
 
         Option::delete($this->MODULE_ID, array("name" => "MASTERTOUR_INFO_DEAL_CODE_FIELD"));
         Option::delete($this->MODULE_ID, array("name" => "MASTERTOUR_ID_CODE_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "TOUR_DATE_DEAL_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "COUNTRY_DEAL_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "RESORT_DEAL_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "DURATION_DEAL_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "FOOD_DEAL_FIELD"));
+        Option::delete($this->MODULE_ID, array("name" => "COUNTRY_STORE_ID"));
+        Option::delete($this->MODULE_ID, array("name" => "FOOD_STORE_ID"));
+        Option::delete($this->MODULE_ID, array("name" => "RESORT_STORE_ID"));
     }
 }

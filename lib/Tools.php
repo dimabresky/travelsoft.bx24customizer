@@ -2,6 +2,10 @@
 
 namespace travelsoft\bx24customizer;
 
+use travelsoft\bx24customizer\stores\Country;
+use travelsoft\bx24customizer\stores\Food;
+use travelsoft\bx24customizer\stores\Resort;
+
 /**
  * Tools clss
  *
@@ -308,6 +312,7 @@ class Tools
 
             $dealFields = self::generateDealFields($agreement, $contactFields['ID']);
             self::updateOrCreateDeal($dealFields);
+            echo "<pre>" . print_r($dealFields, true) . "</pre>";
         }
     }
 
@@ -338,15 +343,17 @@ class Tools
 
     private static function generateDealFields($agreement, $contactId)
     {
-        $idCodeField = Fields::getIdCodeField();
-        $infoDealCodeField = Fields::getInfoCodeField();
-
         $dealFields = [
             'TITLE' => "{$agreement['tourName']} {$agreement['turDate']}",
             'CURRENCY_ID' => self::normalizeCurrency($agreement['currency']),
             'OPPORTUNITY' => $agreement['fullPrice'],
-            $idCodeField => $agreement['dogovorCode'],
-            $infoDealCodeField => self::createMasterTourDealInfoForSave($agreement),
+            Fields::getIdCodeField() => $agreement['dogovorCode'],
+            Fields::getTourDateDealField() => $agreement['turDate'],
+            Fields::getCountryDealField() => Country::getIblockIdByMasterTourId($agreement['countryId']),
+            Fields::getResortDealField() => Resort::getIblockIdByMasterTourId($agreement['cityId']),
+            Fields::getDurationDealField() => $agreement['nights'],
+            Fields::getFoodDealField() => Food::getIblockIdByMasterTourId($agreement['pansionId']),
+            Fields::getInfoCodeField() => self::createMasterTourDealInfoForSave($agreement),
             'CONTACT_ID' => $contactId,
         ];
         if (!empty($agreement['turists'][0]['phone'])) {

@@ -26,6 +26,7 @@ function renderOptions($arOptions, $mid)
         if ($arValues['TYPE'] == 'select') {
 
             $options .= '<select id="' . $name . '" name="' . $name . '">';
+            $options .= '<option>-</option>';
             foreach ($arValues['VALUES'] as $key => $value) {
                 $options .= '<option ' . ($cur_opt_val == $key ? 'selected' : '') . ' value="' . $key . '">' . $value . '</option>';
             }
@@ -40,14 +41,75 @@ function renderOptions($arOptions, $mid)
     echo $options;
 }
 
-$main_options = array(
-    'TOTAL' => []
-);
+$arIBlocks = array();
+$db_iblock = CIBlock::GetList(["SORT" => "ASC"]);
+while ($arRes = $db_iblock->Fetch())
+    $arIBlocks[$arRes["ID"]] = "[" . $arRes["ID"] . "] " . $arRes["NAME"];
+
+$main_options = [
+    'TOTAL' => [
+        'MASTERTOUR_API_URL' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'MASTERTOUR_SECRET_API_KEY' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'MASTERTOUR_INFO_LEAD_CODE_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'MASTERTOUR_INFO_DEAL_CODE_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'MASTERTOUR_ID_CODE_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'TOUR_DATE_DEAL_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'COUNTRY_DEAL_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'RESORT_DEAL_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'DURATION_DEAL_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'FOOD_DEAL_FIELD' => [
+            'DESC' => '',
+            'TYPE' => 'text',
+        ],
+        'COUNTRY_STORE_ID' => [
+            'DESC' => '',
+            'TYPE' => 'select',
+            'VALUES' => $arIBlocks
+        ],
+        'FOOD_STORE_ID' => [
+            'DESC' => '',
+            'TYPE' => 'select',
+            'VALUES' => $arIBlocks
+        ],
+        'RESORT_STORE_ID' => [
+            'DESC' => '',
+            'TYPE' => 'select',
+            'VALUES' => $arIBlocks
+        ],
+    ]
+];
 
 $module_options = \Bitrix\Main\Config\Option::getForModule($mid);
 if (!empty($module_options)) {
     foreach (\array_keys($module_options) as $name) {
-        $main_options["TOTAL"][$name] = ["DESC" => Loc::getMessage("TRAVELSOFT_BX24CUSTOMIZER_OPTION_" . $name), "TYPE" => "text"];
+        $main_options["TOTAL"][$name]['DESC'] = Loc::getMessage("TRAVELSOFT_BX24CUSTOMIZER_OPTION_" . $name);
     }
 }
 
@@ -86,7 +148,8 @@ if ($REQUEST_METHOD == "POST" && strlen($save . $reset) > 0 && check_bitrix_sess
 $o_tab->Begin();
 ?>
 
-<form method="post" action="<? echo $APPLICATION->GetCurPage() ?>?mid=<?= urlencode($mid) ?>&amp;lang=<? echo LANGUAGE_ID ?>">
+<form method="post"
+      action="<? echo $APPLICATION->GetCurPage() ?>?mid=<?= urlencode($mid) ?>&amp;lang=<? echo LANGUAGE_ID ?>">
     <?
     foreach ($main_options as $arOption) {
         $o_tab->BeginNextTab();
