@@ -2,6 +2,10 @@
 
 namespace travelsoft\bx24customizer;
 
+use travelsoft\bx24customizer\stores\Country;
+use travelsoft\bx24customizer\stores\Food;
+use travelsoft\bx24customizer\stores\Resort;
+
 /**
  * Tools clss
  *
@@ -61,8 +65,19 @@ class Tools
     public static function normalizePhone(string $phone)
     {
         return str_replace(
-            ["+", "(", ")", " ", "-", "МТС"], ["", "", "", "", "", ""], $phone
+            ["+", "(", ")", " ", "-", "МТС", "мтс", "mts"], ["", "", "", "", "", "", "", ""], $phone
         );
+    }
+
+    public static function cutPhoneFromNormalize($phone)
+    {
+        if (is_null($phone)) {
+            return '';
+        }
+
+        $phone = self::normalizePhone($phone);
+        preg_match("([0-9]{7,})", $phone, $matches);
+        return !empty($matches) ? $matches[0] : '';
     }
 
     /**
@@ -120,13 +135,14 @@ class Tools
         }
     }
 
-    private static function updateOrCreateDeal($dealFields, $agreementCode = null)
+    private static function updateOrCreateDeal(&$dealFields)
     {
         $deal = new \CCrmDeal(false);
 
         $dealId = '';
-        if (!is_null($agreementCode)) {
-            $arDeal = \CCrmDeal::GetList(false, [Fields::getIdCodeField() => $agreementCode, "CHECK_PERMISSIONS" => "N"])->Fetch();
+        $idCodeField = Fields::getIdCodeField();
+        if (!is_null($dealFields[$idCodeField])) {
+            $arDeal = \CCrmDeal::GetList(false, [$idCodeField => $dealFields[$idCodeField], "CHECK_PERMISSIONS" => "N"])->Fetch();
 
             $dealId = $arDeal['ID'];
         }
@@ -135,6 +151,50 @@ class Tools
             return $deal->Update($dealId, $dealFields);
         } else {
             return $deal->Add($dealFields);
+        }
+    }
+
+    private static function updateOrCreateContact(&$contactFields)
+    {
+        if (empty($contactFields['FM']['EMAIL']['n0']['VALUE']) && empty($contactFields['FM']['PHONE']['n0']['VALUE'])) {
+            $contactFields['ID'] = '';
+            return false;
+        }
+
+        $contact = new \CCrmContact(false);
+
+        $contactId = '';
+        $filterContacts = [];
+
+        if (!empty($contactFields['FM']['EMAIL']['n0']['VALUE'])) {
+            $filterContacts = [
+                "ENTITY_ID" => "CONTACT",
+                "TYPE_ID" => "EMAIL",
+                "VALUE" => $contactFields['FM']['EMAIL']['n0']['VALUE']
+            ];
+        } else if (!empty($contactFields['FM']['PHONE']['n0']['VALUE'])) {
+            $filterContacts = [
+                "ENTITY_ID" => "CONTACT",
+                "TYPE_ID" => "PHONE",
+                "VALUE" => $contactFields['FM']['PHONE']['n0']['VALUE']
+            ];
+        }
+
+        if (!empty($filterContacts)) {
+            $arContact = \CCrmFieldMulti::GetList([], $filterContacts)->Fetch();
+
+            $contactId = $arContact['ELEMENT_ID'];
+        }
+
+        if ($contactId > 0) {
+            //unset so that the records are not duplicated
+            unset($contactFields['FM']['EMAIL']['n0']['VALUE']);
+            unset($contactFields['FM']['PHONE']['n0']['VALUE']);
+
+            return $contact->Update($contactId, $contactFields);
+        } else {
+            $contactFields['UF_CRM_5C0A81849CA05'] = 166;
+            return $contact->Add($contactFields);
         }
     }
 
@@ -241,30 +301,69 @@ class Tools
      */
     public static function generateDeals($dateBegin, $dateEnd)
     {
+        \Bitrix\Main\Loader::includeModule("crm");
+
         $agreements = \travelsoft\bx24customizer\mastertour\Gateway::getAgreementsByDates($dateBegin, $dateEnd);
 
         foreach ($agreements as $agreement) {
 
-            $idCodeField = Fields::getIdCodeField();
+            $contactFields = self::generateContactFields($agreement);
+            self::updateOrCreateContact($contactFields);
 
-            $dealFields = [
-                'TITLE' => "{$agreement['tourName']} {$agreement['turDate']}",
-                'CURRENCY_ID' => self::normalizeCurrency($agreement['currency']),
-                'OPPORTUNITY' => $agreement['fullPrice'],
-                $idCodeField => $agreement['dogovorCode'],
-            ];
-            if (!empty($agreement['turists'][0]['phone'])) {
-                $lead = self::getLeadByPhone($agreement['turists'][0]['phone']);
-
-                if (!empty($lead)) {
-                    $dealFields['LEAD_ID'] = $lead['ID'];
-                }
-            }
-
-            $infoDealCodeField = Fields::getInfoCodeField();
-            $dealFields[$infoDealCodeField] = self::createMasterTourDealInfoForSave($agreement);
-
-            $result = self::updateOrCreateDeal($dealFields, $agreement['dogovorCode']);
+            $dealFields = self::generateDealFields($agreement, $contactFields['ID']);
+            self::updateOrCreateDeal($dealFields);
+            echo "<pre>" . print_r($dealFields, true) . "</pre>";
         }
+    }
+
+    private static function generateContactFields($agreement)
+    {
+        $contactFields = [
+            'LAST_NAME' => $agreement['clientLastName'],
+            'NAME' => $agreement['clientFirstName'],
+            'FM' => [
+                'PHONE' => [
+                    'n0' => [
+                        'VALUE' => self::cutPhoneFromNormalize($agreement['clientPhone']),
+                        'VALUE_TYPE' => 'WORK'
+                    ],
+                ],
+                'EMAIL' => [
+                    'n0' => [
+                        'VALUE' => $agreement['clientEmail'],
+                        'VALUE_TYPE' => 'WORK'
+                    ],
+                ],
+            ],
+            'BIRTHDATE' => $agreement['clientBirthday']
+        ];
+
+        return $contactFields;
+    }
+
+    private static function generateDealFields($agreement, $contactId)
+    {
+        $dealFields = [
+            'TITLE' => "{$agreement['tourName']} {$agreement['turDate']}",
+            'CURRENCY_ID' => self::normalizeCurrency($agreement['currency']),
+            'OPPORTUNITY' => $agreement['fullPrice'],
+            Fields::getIdCodeField() => $agreement['dogovorCode'],
+            Fields::getTourDateDealField() => $agreement['turDate'],
+            Fields::getCountryDealField() => Country::getIblockIdByMasterTourId($agreement['countryId']),
+            Fields::getResortDealField() => Resort::getIblockIdByMasterTourId($agreement['cityId']),
+            Fields::getDurationDealField() => $agreement['nights'],
+            Fields::getFoodDealField() => Food::getIblockIdByMasterTourId($agreement['pansionId']),
+            Fields::getInfoCodeField() => self::createMasterTourDealInfoForSave($agreement),
+            'CONTACT_ID' => $contactId,
+        ];
+        if (!empty($agreement['turists'][0]['phone'])) {
+            $lead = self::getLeadByPhone($agreement['turists'][0]['phone']);
+
+            if (!empty($lead)) {
+                $dealFields['LEAD_ID'] = $lead['ID'];
+            }
+        }
+
+        return $dealFields;
     }
 }

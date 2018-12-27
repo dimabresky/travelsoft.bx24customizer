@@ -7,13 +7,13 @@ namespace travelsoft\bx24customizer;
  *
  * @author dimabresky
  */
-class EventsHandlers {
-    
+class EventsHandlers
+{
     /**
      * Load custom scripts
      */
-    public static function loadJsOfCustomizationTelephonyPopup() {
-        
+    public static function loadJsOfCustomizationTelephonyPopup()
+    {
         $arJsConfig = array(
             "bx24customizer_telephony_popup" => array(
                 "js" => "/local/modules/travelsoft.bx24customizer/scripts/customization_telephony_popup/main.js",
@@ -24,8 +24,8 @@ class EventsHandlers {
         foreach ($arJsConfig as $ext => $arExt) {
             \CJSCore::RegisterExt($ext, $arExt);
         }
-        
-        \CUtil::InitJSCore(array('bx24customizer_telephony_popup')); 
+
+        \CUtil::InitJSCore(array('bx24customizer_telephony_popup'));
     }
 
 }
